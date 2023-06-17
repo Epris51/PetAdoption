@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="pet-details">
+    <h2>{{ pet.name }}</h2>
+    <img class="pet-image" src="{{ pet.photo_url }}" alt="{{ pet.name }}">
+    <p>Age: {{ pet.age }}</p>
+    <p>Species: {{ pet.species }}</p>
+  </div>
+
+  <form action="/{{ pet.id }}" id="edit_pet_form" name="edit_pet_form" method="POST">
+    {{ form.hidden_tag() }}
+
+    {% for field in form if field.widget.input_type != 'hidden' %}
+      <div class="form-group">
+        {{ field.label(class='form-label') }}
+        {% if field.name == 'notes' %}
+          {% set notes_value = field.data or '' %}
+          {{ field(class='form-control', value=notes_value, placeholder='Enter notes...') }}
+        {% else %}
+          {{ field(class='form-control') }}
+        {% endif %}
+
+        {% for error in field.errors %}
+          <div class="error">{{ error }}</div>
+        {% endfor %}
+      </div>
+    {% endfor %}
+
+    <button class="btn btn-primary" type="submit">Submit</button>
+  </form>
+
+  <form action="/{{ pet.id }}/delete" method="POST" onsubmit="return confirm('Are you sure you want to delete this pet?')">
+    {{ form.hidden_tag() }}
+    <button class="btn btn-danger" type="submit">Delete</button>
+  </form>
+{% endblock %}
+

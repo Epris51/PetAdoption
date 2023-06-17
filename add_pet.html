@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <form action="{{ url_for('display_add_pet_form') }}" id="add_pet_form" method="POST">
+    {{ form.hidden_tag() }}
+
+    {% for field in form if field.widget.input_type != 'hidden' %}
+      <div class="form-group">
+        {{ field.label(class='form-label') }}
+        
+        {% if field.widget.input_type == 'select' %}
+          <select class="form-select" name="{{ field.name }}">
+            <option value="" selected disabled>Select an option</option>
+            {% for value, label in field.choices %}
+              <option value="{{ value }}">{{ label }}</option>
+            {% endfor %}
+          </select>
+        {% else %}
+          {% if field.name == 'notes' %}
+            <datalist id="notes-suggestions">
+              <option value="Friendly and playful"></option>
+              <option value="Loves to cuddle"></option>
+              <option value="Good with kids"></option>
+              <option value="Well-trained"></option>
+              <option value="Needs special diet"></option>
+              <option value="Requires daily exercise"></option>
+            </datalist>
+            {{ field(class='form-control', list='notes-suggestions') }}
+          {% else %}
+            {{ field(class='form-control') }}
+          {% endif %}
+        {% endif %}
+
+        {% for error in field.errors %}
+          <div class="invalid-feedback">{{ error }}</div>
+        {% endfor %}
+      </div>
+    {% endfor %}
+
+    <button class="btn btn-primary" type="submit">Submit</button>
+  </form>
+{% endblock %}
+
